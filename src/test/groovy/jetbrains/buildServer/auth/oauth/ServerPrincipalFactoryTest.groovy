@@ -13,7 +13,7 @@ class ServerPrincipalFactoryTest extends Specification {
     ServerPrincipalFactory principalFactory;
 
     def setup() {
-        principalFactory = new ServerPrincipalFactory(userModel)
+        principalFactory = new ServerPrincipalFactory(userModel, sUserGroup)
     }
 
     def "read user from model"() {

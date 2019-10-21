@@ -1,12 +1,13 @@
 package jetbrains.buildServer.auth.oauth;
 
+import jetbrains.buildServer.groups.SUserGroup;
+import jetbrains.buildServer.groups.UserGroupManager;
 import jetbrains.buildServer.serverSide.auth.ServerPrincipal;
 import jetbrains.buildServer.users.InvalidUsernameException;
 import jetbrains.buildServer.users.SUser;
 import jetbrains.buildServer.users.UserModel;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -18,8 +19,12 @@ public class ServerPrincipalFactory {
     @NotNull
     private final UserModel userModel;
 
-    public ServerPrincipalFactory(@NotNull UserModel userModel) {
+    @NotNull
+    private final UserGroupManager userGroupManager;
+
+    public ServerPrincipalFactory(@NotNull UserModel userModel, @NotNull UserGroupManager userGroupManager) {
         this.userModel = userModel;
+        this.userGroupManager = userGroupManager;
     }
 
     @NotNull
@@ -31,6 +36,12 @@ public class ServerPrincipalFactory {
         } else if (allowCreatingNewUsersByLogin) {
             LOG.info("Creating user: " + user);
             SUser created = userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.getId());
+            for(String group : user.getGroups()) {
+                SUserGroup userGroup = userGroupManager.findUserGroupByName(group);
+                if(userGroup != null) {
+                    userGroup.addUser(created);
+                }
+            }
             created.setUserProperty(PluginConstants.ID_USER_PROPERTY_KEY, user.getId());
             created.updateUserAccount(user.getId(), user.getName(), user.getEmail());
             return Optional.of(new ServerPrincipal(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.getId()));

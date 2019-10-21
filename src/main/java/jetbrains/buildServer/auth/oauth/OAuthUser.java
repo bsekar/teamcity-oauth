@@ -1,35 +1,36 @@
 package jetbrains.buildServer.auth.oauth;
 
-import com.intellij.openapi.util.text.StringUtil;
+import org.json.simple.JSONArray;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class OAuthUser {
     private static final String[] IDS_LIST = new String[]{"login", "username", "id", "preferred_username"};
     private static final String[] NAMES_LIST = new String[]{"name", "display_name", "displayName"};
     private static final String[] EMAIL_LIST = new String[]{"email", "mail"};
+    private final String GROUPS_KEY = "groups";
 
     private final String id;
     private final String name;
     private final String email;
+    private final List<String> groups;
 
     public OAuthUser(String id) {
-        this(id, null, null);
+        this(id, null, null, null);
     }
 
-    public OAuthUser(String id, String name, String email) {
+    public OAuthUser(String id, String name, String email, List<String> groups) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.groups = groups;
     }
 
     public OAuthUser(Map userData) {
         this.id = getValueByKeys(userData, IDS_LIST);
         this.name = getValueByKeys(userData, NAMES_LIST);
         this.email = getValueByKeys(userData, EMAIL_LIST);
+        this.groups = Arrays.asList(getArrayValueByKey(userData, GROUPS_KEY));
     }
 
     private String getValueByKeys(Map userData, String[] keys) {
@@ -43,6 +44,19 @@ public class OAuthUser {
             }
         }
         return value;
+    }
+
+    private String[] getArrayValueByKey(Map userData, String key) {
+        if (userData == null)
+            return null;
+        Object o = userData.get(key);
+        JSONArray jsonArray = (JSONArray) o;
+        int size = jsonArray.size();
+        String[] groupsArray = new String[size];
+        for(int i=0; i<size; i++) {
+            groupsArray[i] = (String) jsonArray.get(i);
+        }
+        return groupsArray;
     }
 
     public String getId() {
@@ -99,5 +113,9 @@ public class OAuthUser {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, email);
+    }
+
+    public List<String> getGroups() {
+        return groups;
     }
 }

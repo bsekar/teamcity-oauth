@@ -105,6 +105,17 @@
     <label for="<%=ConfigKey.allowInsecureHttps%>">Insecure https</label><br/>
     <span class="grayNote">Allow insecure https access like invalid certificate</span>
 </div>
+
+<div>
+    <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.syncGroups.toString()%>"/>
+    <label for="<%=ConfigKey.syncGroups%>">Sync Groups</label><br/>
+    <span class="grayNote">Allow Full Sync of groups based on the groups claim in token</span>
+</div>
+<div>
+    <label for="<%=ConfigKey.groups%>">Groups:</label><br/>
+    <prop:textProperty style="width: 100%;" name="<%=ConfigKey.groups.toString()%>"/><br/>
+    <span class="grayNote">What groups are allowed to be managed by this OAuth server</span>
+</div>
 <script type="text/javascript">
     BS.TeamCityOAuth.init('#<%=ConfigKey.preset.toString()%>');
 </script>

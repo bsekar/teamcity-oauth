@@ -90,7 +90,7 @@ class OAuthClientTest extends Specification {
         def token = 'test_token'
         server.enqueue(new MockResponse().setBody(JSONValue.toJSONString([id: 'user', name: 'userName', email: 'email'])))
         expect:
-        client.getUserData(token) == new OAuthUser('user', 'userName', 'email')
+        client.getUserData(token) == new OAuthUser('user', 'userName', 'email', groups)
         def req = server.takeRequest()
         req.method == 'GET'
         req.path == '/user'

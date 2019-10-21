@@ -30,6 +30,6 @@ class OAuthUserTest extends Specification {
 
     def "should return name if id is not given"() {
         expect:
-        new OAuthUser(null, 'name', 'email@domain').id == 'email@domain'
+        new OAuthUser(null, 'name', 'email@domain', groups).id == 'email@domain'
     }
 }
