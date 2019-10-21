@@ -109,12 +109,12 @@
 <div>
     <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.syncGroups.toString()%>"/>
     <label for="<%=ConfigKey.syncGroups%>">Sync Groups</label><br/>
-    <span class="grayNote">Allow Full Sync of groups based on the groups claim in token</span>
+    <span class="grayNote">Allow Full Sync of groups based on the groups claim in access token</span>
 </div>
 <div>
-    <label for="<%=ConfigKey.groups%>">Groups:</label><br/>
+    <label for="<%=ConfigKey.groups%>">Groups (starts with):</label><br/>
     <prop:textProperty style="width: 100%;" name="<%=ConfigKey.groups.toString()%>"/><br/>
-    <span class="grayNote">What groups are allowed to be managed by this OAuth server</span>
+    <span class="grayNote">What groups are allowed to be managed by this OAuth server. Ex: "pod-developers, pod-admins" or "pod-"</span>
 </div>
 <script type="text/javascript">
     BS.TeamCityOAuth.init('#<%=ConfigKey.preset.toString()%>');

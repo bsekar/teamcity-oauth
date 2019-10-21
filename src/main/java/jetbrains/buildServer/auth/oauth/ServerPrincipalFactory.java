@@ -9,8 +9,7 @@ import jetbrains.buildServer.users.UserModel;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
+import java.util.*;
 
 public class ServerPrincipalFactory {
 
@@ -22,9 +21,14 @@ public class ServerPrincipalFactory {
     @NotNull
     private final UserGroupManager userGroupManager;
 
-    public ServerPrincipalFactory(@NotNull UserModel userModel, @NotNull UserGroupManager userGroupManager) {
+    @NotNull
+    private final AuthenticationSchemeProperties properties;
+
+    public ServerPrincipalFactory(@NotNull UserModel userModel, @NotNull UserGroupManager userGroupManager,
+            @NotNull AuthenticationSchemeProperties properties) {
         this.userModel = userModel;
         this.userGroupManager = userGroupManager;
+        this.properties = properties;
     }
 
     @NotNull
@@ -36,7 +40,23 @@ public class ServerPrincipalFactory {
         } else if (allowCreatingNewUsersByLogin) {
             LOG.info("Creating user: " + user);
             SUser created = userModel.createUserAccount(PluginConstants.OAUTH_AUTH_SCHEME_NAME, user.getId());
-            for(String group : user.getGroups()) {
+            List<String> groups = user.getGroups();
+            Set<String> finalGroupSet = new HashSet<>();
+            if (properties.isSyncGroups()) {
+                finalGroupSet.addAll(groups);
+            } else {
+                List<String> whitelistedGroups = properties.getWhitelistedGroups();
+                if (whitelistedGroups != null) {
+                    for (String whitelistedGroup : whitelistedGroups) {
+                        for (String group : groups) {
+                            if (group.startsWith(whitelistedGroup)) {
+                                finalGroupSet.add(group);
+                            }
+                        }
+                    }
+                }
+            }
+            for(String group : finalGroupSet) {
                 SUserGroup userGroup = userGroupManager.findUserGroupByName(group);
                 if(userGroup != null) {
                     userGroup.addUser(created);

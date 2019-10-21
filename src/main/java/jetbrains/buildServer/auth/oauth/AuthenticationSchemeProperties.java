@@ -69,6 +69,17 @@ public class AuthenticationSchemeProperties {
     }
 
     @Nullable
+    public List<String> getWhitelistedGroups() {
+        return StringUtil.split(getProperty(ConfigKey.groups), ",");
+    }
+
+    public boolean isSyncGroups() {
+        return Optional.ofNullable(getProperty(ConfigKey.syncGroups))
+                .map(Boolean::valueOf)
+                .orElse(true);
+    }
+
+    @Nullable
     public String getOrganizations() {
         return getProperty(ConfigKey.organizations);
     }

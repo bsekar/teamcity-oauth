@@ -25,8 +25,8 @@ public class PluginConfiguration {
     }
 
     @Bean
-    public ServerPrincipalFactory serverPrincipalFactory(UserModel userModel, UserGroupManager userGroupManager) {
-        return new ServerPrincipalFactory(userModel, userGroupManager);
+    public ServerPrincipalFactory serverPrincipalFactory(UserModel userModel, UserGroupManager userGroupManager, AuthenticationSchemeProperties properties) {
+        return new ServerPrincipalFactory(userModel, userGroupManager, properties);
     }
 
     @Bean
