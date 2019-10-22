@@ -1,6 +1,7 @@
 <%@ page import="jetbrains.buildServer.auth.oauth.ConfigKey" %>
 <%@ include file="/include-internal.jsp" %>
 <%@ taglib prefix="prop" tagdir="/WEB-INF/tags/props" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div>
     <jsp:include page="/admin/allowCreatingNewUsersByLogin.jsp"/>
 </div>
@@ -107,15 +108,44 @@
 </div>
 
 <div>
-    <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.syncGroups.toString()%>"/>
-    <label for="<%=ConfigKey.syncGroups%>">Sync Groups</label><br/>
+    <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.syncGroups.toString()%>" />
+    <label for="<%=ConfigKey.syncGroups%>">Sync All Groups</label><br/>
     <span class="grayNote">Allow Full Sync of groups based on the groups claim in access token</span>
 </div>
-<div>
-    <label for="<%=ConfigKey.groups%>">Groups (starts with):</label><br/>
-    <prop:textProperty style="width: 100%;" name="<%=ConfigKey.groups.toString()%>"/><br/>
-    <span class="grayNote">What groups are allowed to be managed by this OAuth server. Ex: "pod-developers, pod-admins" or "pod-"</span>
-</div>
+<script type="text/javascript">
+    console.log("uncheckedValue is ")
+</script>
+<c:set var="condition" value="true"/>
+<c:choose>
+    <c:when test="${condition == true}">
+        <div id="list_groups" style="display:none">
+            <label for="<%=ConfigKey.groups%>">Groups (starts with):</label><br/>
+            <prop:textProperty style="width: 100%;" name="<%=ConfigKey.groups.toString()%>"/><br/>
+            <span class="grayNote">What groups are allowed to be managed by this OAuth server. Ex: "pod-developers, pod-admins" or "pod-"</span>
+        </div>
+    </c:when>
+    <c:otherwise>
+        <div id="list_groups">
+            <label for="<%=ConfigKey.groups%>">Groups (starts with):</label><br/>
+            <prop:textProperty style="width: 100%;" name="<%=ConfigKey.groups.toString()%>"/><br/>
+            <span class="grayNote">What groups are allowed to be managed by this OAuth server. Ex: "pod-developers, pod-admins" or "pod-"</span>
+        </div>
+    </c:otherwise>
+</c:choose>
+
 <script type="text/javascript">
     BS.TeamCityOAuth.init('#<%=ConfigKey.preset.toString()%>');
 </script>
+
+<%--<script type="text/javascript">--%>
+    <%--function toggleListGroups() {--%>
+        <%--console.log("In the function")--%>
+        <%--var isFullSync = false,--%>
+            <%--listGroups = $j('#list_groups');--%>
+        <%--if (isFullSync) {--%>
+            <%--listGroups.show();--%>
+        <%--} else {--%>
+            <%--listGroups.hide();--%>
+        <%--}--%>
+    <%--}--%>
+<%--</script>--%>

@@ -1,6 +1,7 @@
 package jetbrains.buildServer.auth.oauth
 
 import org.assertj.core.util.Files
+import org.assertj.core.util.Lists
 import org.json.simple.JSONValue
 import org.springframework.core.io.DefaultResourceLoader
 import spock.lang.Specification
@@ -30,6 +31,6 @@ class OAuthUserTest extends Specification {
 
     def "should return name if id is not given"() {
         expect:
-        new OAuthUser(null, 'name', 'email@domain', groups).id == 'email@domain'
+        new OAuthUser(null, 'name', 'email@domain', Lists.newArrayList("pod")).id == 'email@domain'
     }
 }
