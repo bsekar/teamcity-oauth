@@ -30,7 +30,8 @@ public class OAuthUser {
         this.id = getValueByKeys(userData, IDS_LIST);
         this.name = getValueByKeys(userData, NAMES_LIST);
         this.email = getValueByKeys(userData, EMAIL_LIST);
-        this.groups = Arrays.asList(getGroups(userData, GROUPS_KEY));
+        this.groups = getGroups(userData, GROUPS_KEY) == null ? new ArrayList<>() : Arrays.asList(getGroups(userData,
+         GROUPS_KEY));
     }
 
     private String getValueByKeys(Map userData, String[] keys) {
@@ -50,6 +51,9 @@ public class OAuthUser {
         if (userData == null)
             return null;
         Object o = userData.get(key);
+        if (o == null) {
+            return null;
+        }
         JSONArray jsonArray = (JSONArray) o;
         int size = jsonArray.size();
         String[] groupsArray = new String[size];

@@ -1,5 +1,6 @@
 package jetbrains.buildServer.auth.oauth
 
+import jetbrains.buildServer.groups.UserGroupManager
 import jetbrains.buildServer.serverSide.auth.ServerPrincipal
 import jetbrains.buildServer.users.InvalidUsernameException
 import jetbrains.buildServer.users.SUser
@@ -9,11 +10,13 @@ import spock.lang.Specification
 class ServerPrincipalFactoryTest extends Specification {
 
     UserModel userModel = Mock()
+    UserGroupManager userGroupManager = Mock()
     SUser teamcityUser = Mock()
+    AuthenticationSchemeProperties properties = Mock()
     ServerPrincipalFactory principalFactory;
 
     def setup() {
-        principalFactory = new ServerPrincipalFactory(userModel, sUserGroup, properties)
+        principalFactory = new ServerPrincipalFactory(userModel, userGroupManager, properties)
     }
 
     def "read user from model"() {

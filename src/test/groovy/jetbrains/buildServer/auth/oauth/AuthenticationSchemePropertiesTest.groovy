@@ -79,10 +79,9 @@ class AuthenticationSchemePropertiesTest extends Specification {
 
     def "configuration read whitelist groups"() {
         given:
-        configuration[ConfigKey.groups.toString()] = 'pod-a, pod-b'
+        configuration[ConfigKey.groups.toString()] = 'pod-a,pod-b'
         expect:
-        schemeProperties.getWhitelistedGroups() contains("pod-a")
-        schemeProperties.getWhitelistedGroups() contains("pod-b")
+        schemeProperties.getWhitelistedGroups() containsAll("pod-a", "pod-b")
     }
 
     def "configuration is valid for github preset"() {
