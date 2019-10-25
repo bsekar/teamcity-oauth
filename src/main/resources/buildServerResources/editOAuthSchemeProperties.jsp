@@ -1,11 +1,15 @@
 <%@ page import="jetbrains.buildServer.auth.oauth.ConfigKey" %>
 <%@ include file="/include-internal.jsp" %>
 <%@ taglib prefix="prop" tagdir="/WEB-INF/tags/props" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div>
     <jsp:include page="/admin/allowCreatingNewUsersByLogin.jsp"/>
 </div>
 <br/>
+<style type="text/css">
+    div.posRel {
+        width: 95%;
+    }
+</style>
 <script type="text/javascript">
     (function () {
         BS.TeamCityOAuth = {
@@ -21,12 +25,24 @@
             },
             onTypeChanged: function () {
                 var isCustom = (this.selectedPreset === 'custom'),
-                        settings = $j('#oauth_server_settings');
+                        settings = $j('#oauth_server_settings'),
+                        groupSettings = $j('#oauth_server_group_settings');
                 if (isCustom) {
                     settings.show();
+                    groupSettings.show();
                 } else {
                     settings.hide();
+                    groupSettings.hide();
                 }
+            },
+            showOrHideGroups: function () {
+              var groupsListDiv = $j('#groups_list');
+              var syncGroups = $j('#<%=ConfigKey.syncGroups.toString()%>');
+              if (syncGroups[0].checked) {
+                  groupsListDiv.show();
+              } else {
+                  groupsListDiv.hide();
+              }
             },
             displayOrganizations: function() {
               var isGithub = (this.selectedPreset === 'github'),
@@ -38,6 +54,10 @@
               }
             }
         };
+        $j(document).ready(function() {
+            BS.TeamCityOAuth.init('#<%=ConfigKey.preset.toString()%>');
+            BS.TeamCityOAuth.showOrHideGroups();
+        });
     })();
 </script>
 <div>
@@ -99,53 +119,23 @@
 <div>
     <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.hideLoginForm.toString()%>"/>
     <label for="<%=ConfigKey.hideLoginForm%>">Hide login form</label><br/>
-    <span class="grayNote">Hide user/password login form on Teamcity login page.</span>
+    <span class="grayNote">Hide user/password login form on TeamCity login page.</span>
 </div>
 <div>
     <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.allowInsecureHttps.toString()%>"/>
     <label for="<%=ConfigKey.allowInsecureHttps%>">Insecure https</label><br/>
     <span class="grayNote">Allow insecure https access like invalid certificate</span>
 </div>
-
-<div>
-    <prop:checkboxProperty uncheckedValue="false" name="<%=ConfigKey.syncGroups.toString()%>" />
-    <label for="<%=ConfigKey.syncGroups%>">Sync All Groups</label><br/>
-    <span class="grayNote">Allow Full Sync of groups based on the groups claim in access token</span>
+<div id="oauth_server_group_settings">
+    <div>
+        <prop:checkboxProperty name="<%=ConfigKey.syncGroups.toString()%>" checked="false" uncheckedValue="false"
+                               onclick="BS.TeamCityOAuth.showOrHideGroups()"/>
+        <label for="<%=ConfigKey.syncGroups%>">Sync groups</label><br/>
+        <span class="grayNote">Allow synchronization of groups based on the <i>groups</i> claim in the access token.</span>
+    </div>
+    <div id="groups_list" style="display: none;">
+        <label for="<%=ConfigKey.groups%>">Groups (starts with):</label><br/>
+        <prop:textProperty style="width: 100%;" name="<%=ConfigKey.groups.toString()%>"/><br/>
+        <span class="grayNote">The groups that are allowed to be managed by this OAuth server. Please separate the groups or group prefixes by commas, e.g., "dev-team1, dev-team2" or "dev-".</span>
+    </div>
 </div>
-<script type="text/javascript">
-    console.log("uncheckedValue is ")
-</script>
-<c:set var="condition" value="true"/>
-<c:choose>
-    <c:when test="${condition == true}">
-        <div id="list_groups" style="display:none">
-            <label for="<%=ConfigKey.groups%>">Groups (starts with):</label><br/>
-            <prop:textProperty style="width: 100%;" name="<%=ConfigKey.groups.toString()%>"/><br/>
-            <span class="grayNote">What groups are allowed to be managed by this OAuth server. Ex: "pod-developers, pod-admins" or "pod-"</span>
-        </div>
-    </c:when>
-    <c:otherwise>
-        <div id="list_groups">
-            <label for="<%=ConfigKey.groups%>">Groups (starts with):</label><br/>
-            <prop:textProperty style="width: 100%;" name="<%=ConfigKey.groups.toString()%>"/><br/>
-            <span class="grayNote">What groups are allowed to be managed by this OAuth server. Ex: "pod-developers, pod-admins" or "pod-"</span>
-        </div>
-    </c:otherwise>
-</c:choose>
-
-<script type="text/javascript">
-    BS.TeamCityOAuth.init('#<%=ConfigKey.preset.toString()%>');
-</script>
-
-<%--<script type="text/javascript">--%>
-    <%--function toggleListGroups() {--%>
-        <%--console.log("In the function")--%>
-        <%--var isFullSync = false,--%>
-            <%--listGroups = $j('#list_groups');--%>
-        <%--if (isFullSync) {--%>
-            <%--listGroups.show();--%>
-        <%--} else {--%>
-            <%--listGroups.hide();--%>
-        <%--}--%>
-    <%--}--%>
-<%--</script>--%>

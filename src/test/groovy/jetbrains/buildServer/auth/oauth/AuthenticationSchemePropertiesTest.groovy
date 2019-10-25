@@ -77,11 +77,25 @@ class AuthenticationSchemePropertiesTest extends Specification {
         schemeProperties.getScope() == 'scope'
     }
 
-    def "configuration read whitelist groups"() {
+    def "configuration read whitelist groups with comma and no space"() {
         given:
-        configuration[ConfigKey.groups.toString()] = 'pod-a,pod-b'
+        configuration[ConfigKey.groups.toString()] = 'dev-a,dev-b'
         expect:
-        schemeProperties.getWhitelistedGroups() containsAll("pod-a", "pod-b")
+        schemeProperties.getWhitelistedGroups() containsAll("dev-a", "dev-b")
+    }
+
+    def "configuration read whitelist groups with comma and space"() {
+        given:
+        configuration[ConfigKey.groups.toString()] = 'dev-a, dev-b'
+        expect:
+        schemeProperties.getWhitelistedGroups() containsAll("dev-a", "dev-b")
+    }
+
+    def "configuration read whitelist groups with single entry"() {
+        given:
+        configuration[ConfigKey.groups.toString()] = 'dev-a'
+        expect:
+        schemeProperties.getWhitelistedGroups() containsAll("dev-a")
     }
 
     def "configuration is valid for github preset"() {

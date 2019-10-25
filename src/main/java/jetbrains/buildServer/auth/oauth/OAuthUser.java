@@ -31,12 +31,13 @@ public class OAuthUser {
         this.name = getValueByKeys(userData, NAMES_LIST);
         this.email = getValueByKeys(userData, EMAIL_LIST);
         this.groups = getGroups(userData, GROUPS_KEY) == null ? new ArrayList<>() : Arrays.asList(getGroups(userData,
-         GROUPS_KEY));
+                GROUPS_KEY));
     }
 
     private String getValueByKeys(Map userData, String[] keys) {
-        if (userData == null)
+        if (userData == null) {
             return null;
+        }
         String value = null;
         for (String key : keys) {
             value = (String) userData.get(key);
@@ -48,17 +49,18 @@ public class OAuthUser {
     }
 
     private String[] getGroups(Map userData, String key) {
-        if (userData == null)
-            return null;
-        Object o = userData.get(key);
-        if (o == null) {
+        if (userData == null) {
             return null;
         }
-        JSONArray jsonArray = (JSONArray) o;
-        int size = jsonArray.size();
-        String[] groupsArray = new String[size];
-        for(int i=0; i<size; i++) {
-            groupsArray[i] = (String) jsonArray.get(i);
+        Object groupsObject = userData.get(key);
+        if (groupsObject == null) {
+            return null;
+        }
+        JSONArray groupsJsonArray = (JSONArray) groupsObject;
+        int groupSize = groupsJsonArray.size();
+        String[] groupsArray = new String[groupSize];
+        for (int i = 0; i < groupSize; i++) {
+            groupsArray[i] = (String) groupsJsonArray.get(i);
         }
         return groupsArray;
     }
@@ -81,7 +83,7 @@ public class OAuthUser {
         }
         List<String> emailDomains = properties.getEmailDomains();
 
-        if(emailDomains != null && !emailDomains.isEmpty()) {
+        if (emailDomains != null && !emailDomains.isEmpty()) {
             boolean isValid = emailDomains.stream().anyMatch(emailDomain -> {
                 if (!emailDomain.startsWith("@")) {
                     emailDomain = "@" + emailDomain;
@@ -106,8 +108,12 @@ public class OAuthUser {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         OAuthUser oAuthUser = (OAuthUser) o;
         return Objects.equals(id, oAuthUser.id) &&
                 Objects.equals(name, oAuthUser.name) &&
