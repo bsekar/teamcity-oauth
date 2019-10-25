@@ -21,16 +21,17 @@ class OAuthUserTest extends Specification {
         then:
         user.id == expectedId
         user.name == expectedName
+        user.groups == expectedGroups
         where:
-        location                        || expectedId             | expectedName
-        "classpath:user/github.json"    || 'pwielgolaski'         | 'Piotr Wielgolaski'
-        "classpath:user/bitbucket.json" || 'pwielgolaski'         | 'Piotr Wielgolaski'
-        "classpath:user/google.json"    || 'superemail@gmail.com' | 'Piotr Wielgołaski'
-        "classpath:user/azure.json"     || 'any-guid'             | 'Piotr Wielgołaski'
+        location                        || expectedId             | expectedName        | expectedGroups
+        "classpath:user/github.json"    || 'pwielgolaski'         | 'Piotr Wielgolaski' | ["dev"]
+        "classpath:user/bitbucket.json" || 'pwielgolaski'         | 'Piotr Wielgolaski' | ["dev"]
+        "classpath:user/google.json"    || 'superemail@gmail.com' | 'Piotr Wielgołaski' | ["dev"]
+        "classpath:user/azure.json"     || 'any-guid'             | 'Piotr Wielgołaski' | ["dev"]
     }
 
     def "should return name if id is not given"() {
         expect:
-        new OAuthUser(null, 'name', 'email@domain', Lists.newArrayList("pod")).id == 'email@domain'
+        new OAuthUser(null, 'name', 'email@domain', Lists.newArrayList("dev")).id == 'email@domain'
     }
 }

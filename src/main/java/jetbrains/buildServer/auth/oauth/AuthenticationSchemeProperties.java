@@ -7,9 +7,9 @@ import jetbrains.buildServer.serverSide.auth.LoginConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AuthenticationSchemeProperties {
 
@@ -69,8 +69,16 @@ public class AuthenticationSchemeProperties {
     }
 
     @Nullable
-    public List<String> getWhitelistedGroups() {
-        return StringUtil.split(getProperty(ConfigKey.groups), ",");
+    public Set<String> getWhitelistedGroups() {
+        String groupsProperty = getProperty(ConfigKey.groups);
+        Set<String> groups = null;
+
+        if (StringUtil.isNotEmpty(groupsProperty)) {
+            groups = Stream.of(groupsProperty.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toSet());
+        }
+        return groups;
     }
 
     public boolean isSyncGroups() {
